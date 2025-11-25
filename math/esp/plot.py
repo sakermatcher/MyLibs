@@ -28,7 +28,9 @@ class fig:
     def __init__(self, subPlots:list[list]):
         """
         Inicializa una figura con los subgráficos indicados.
-        subPlots: Lista 2D de objetos de gráfico para organizar en la figura.
+        
+        Args:
+            subPlots: Lista 2D de objetos de gráfico para organizar en la figura.
         """
         if type(subPlots[0]) is not list:
             subPlots= [subPlots]
@@ -60,13 +62,15 @@ class plotHeatMap:
     def __init__(self, values:list[list[float]], x_labels:list[str]=None, y_labels:list[str]=None, title:str="Heat Map", showVals:bool=True, cmap:str="viridis", showGrid:bool=True):
         """
         Inicializa un mapa de calor con los datos y opciones de estilo indicados.
-        values: Lista 2D de valores para el mapa de calor.
-        x_labels: Etiquetas del eje X.
-        y_labels: Etiquetas del eje Y.
-        title: Título del mapa de calor.
-        showVals: Si se deben mostrar los valores en cada celda.
-        cmap: Mapa de colores a usar.
-        showGrid: Indica si se muestran las líneas de la cuadrícula.
+
+        Args:
+            values: Lista 2D de valores para el mapa de calor.
+            x_labels: Etiquetas del eje X.
+            y_labels: Etiquetas del eje Y.
+            title: Título del mapa de calor.
+            showVals: Si se deben mostrar los valores en cada celda.
+            cmap: Mapa de colores a usar.
+            showGrid: Indica si se muestran las líneas de la cuadrícula.
         """
         self.values= values
         self.x_labels= x_labels
@@ -77,7 +81,12 @@ class plotHeatMap:
         self.showVals= showVals
     
     def show(self, block= True, show=True):
-        """Muestra el mapa de calor."""
+        """Muestra el mapa de calor.
+        
+        Args:
+            block: Si la ventana del gráfico debe bloquear la ejecución hasta cerrarse.
+            show: Si se debe mostrar el gráfico.
+        """
         if show:
             plt.figure()
         sb.heatmap(self.values, xticklabels=self.x_labels, yticklabels=self.y_labels, cmap=self.cmap, annot=self.showVals)
@@ -94,12 +103,14 @@ class plotBox:
     def __init__(self, values:vector, x_label:str="X-axis", y_label:str="Y-axis", title:str="Box Plot", color:str=None, showGrid:bool=True):
         """
         Inicializa un diagrama de caja (boxplot) con los datos y opciones de estilo indicados.
-        values: Vector con los valores (eje Y).
-        x_label: Etiqueta del eje X.
-        y_label: Etiqueta del eje Y.
-        title: Título del gráfico.
-        color: Color de la caja.
-        showGrid: Indica si se muestran las líneas de la cuadrícula.
+
+        Args:
+            values: Vector con los valores (eje Y).
+            x_label: Etiqueta del eje X.
+            y_label: Etiqueta del eje Y.
+            title: Título del gráfico.
+            color: Color de la caja.
+            showGrid: Indica si se muestran las líneas de la cuadrícula.
         """
         self.y_data= values
         if color is None:
@@ -111,10 +122,15 @@ class plotBox:
         self.y_label= y_label
 
     def show(self, block= True, show=True):
-        """Muestra el diagrama de caja (boxplot)."""
+        """Muestra el diagrama de caja (boxplot).
+        
+        Args:
+            block: Si la ventana del gráfico debe bloquear la ejecución hasta cerrarse.
+            show: Si se debe mostrar el gráfico.
+        """
         if show:
             plt.figure()
-        plt.boxplot(self.y_data.toFloats(), patch_artist= True, boxprops=dict(facecolor=self.color))
+        plt.boxplot(self.y_data._toFloats(), patch_artist= True, boxprops=dict(facecolor=self.color))
         plt.title(self.title)
         plt.xlabel(self.x_label)
         plt.ylabel(self.y_label)
@@ -130,12 +146,14 @@ class plotLine:
     def __init__(self, x:vector, y:vector, x_label:str="X-axis", y_label:str="Y-axis", title:str="Plot", label:str="", color:str=None, type:str='l', pointTypes:str="", showGrid:bool=True):
         """
         Inicializa una gráfica con línea y/o puntos con los datos y opciones de estilo indicados.
-        x: Vector de coordenadas X.
-        y: Vector de coordenadas Y.
-        label: Etiqueta de la serie.
-        color: Color de la serie.
-        type: Tipo de gráfico ('l' para línea, 's' para dispersión, etc.).
-        pointTypes: Estilo del marcador para los puntos (si aplica).
+        
+        Args:
+            x: Vector de coordenadas X.
+            y: Vector de coordenadas Y.
+            label: Etiqueta de la serie.
+            color: Color de la serie.
+            type: Tipo de gráfico ('l' para línea, 's' para dispersión, etc.).
+            pointTypes: Estilo del marcador para los puntos (si aplica).
         """
         self.x_data= [x]
         self.y_data= [y]
@@ -155,12 +173,14 @@ class plotLine:
     def addData(self, x:vector, y:vector, label:str="", color:str=None, type:str='l', pointTypes:str=""):
         """
         Agrega otro conjunto de datos a la gráfica.
-        x: Vector de coordenadas X.
-        y: Vector de coordenadas Y.
-        label: Etiqueta de la nueva serie.
-        color: Color de la nueva serie.
-        type: Tipo de gráfico ('l' para línea, 's' para dispersión, etc.).
-        pointTypes: Estilo del marcador para los puntos (si aplica).
+
+        Args:
+            x: Vector de coordenadas X.
+            y: Vector de coordenadas Y.
+            label: Etiqueta de la nueva serie.
+            color: Color de la nueva serie.
+            type: Tipo de gráfico ('l' para línea, 's' para dispersión, etc.).
+            pointTypes: Estilo del marcador para los puntos (si aplica).
         """
         self.x_data.append(x)
         self.y_data.append(y)
@@ -176,7 +196,12 @@ class plotLine:
     agregarDatos= addData
 
     def show(self, block= True, show=True):
-        """Muestra la gráfica con línea y/o puntos."""
+        """Muestra la gráfica con línea y/o puntos.
+        
+        Args:
+            block: Si la ventana del gráfico debe bloquear la ejecución hasta cerrarse.
+            show: Si se debe mostrar el gráfico.
+        """
         if show:
             plt.figure()
         for i in range(len(self.x_data)):
@@ -200,13 +225,15 @@ class plotBar:
     def __init__(self, names:list[str], y:vector, x_label:str="", y_label:str="", title:str="Bar Plot", color:str=None, showGrid:bool=True):
         """
         Inicializa un gráfico de barras con los datos y opciones de estilo indicados.
-        names: Nombres/etiquetas para cada barra.
-        y: Vector de valores (altura de cada barra).
-        x_label: Etiqueta del eje X.
-        y_label: Etiqueta del eje Y.
-        title: Título del gráfico.
-        color: Color de las barras.
-        showGrid: Indica si se muestran las líneas de la cuadrícula.
+
+        Args:
+            names: Nombres/etiquetas para cada barra.
+            y: Vector de valores (altura de cada barra).
+            x_label: Etiqueta del eje X.
+            y_label: Etiqueta del eje Y.
+            title: Título del gráfico.
+            color: Color de las barras.
+            showGrid: Indica si se muestran las líneas de la cuadrícula.
         """
         self.names= names
         self.y_data= y
@@ -219,7 +246,12 @@ class plotBar:
         self.y_label= y_label
 
     def show(self, block= True, show=True):
-        """Muestra el gráfico de barras."""
+        """Muestra el gráfico de barras.
+        
+        Args:
+            block: Si la ventana del gráfico debe bloquear la ejecución hasta cerrarse.
+            show: Si se debe mostrar el gráfico.
+        """
         if show:
             plt.figure()
         plt.bar(self.names, self.y_data, color=self.color)
@@ -238,10 +270,12 @@ class plotPie:
     def __init__(self, names:list[str], values:vector, title:str="Pie Chart", colors:list[str]=None):
         """
         Inicializa un gráfico de pastel con los datos y opciones de estilo indicados.
-        names: Nombres/etiquetas para cada porción.
-        values: Vector de valores para cada porción.
-        title: Título del gráfico de pastel.
-        colors: Lista de colores para las porciones.
+
+        Args:
+            names: Nombres/etiquetas para cada porción.
+            values: Vector de valores para cada porción.
+            title: Título del gráfico de pastel.
+            colors: Lista de colores para las porciones.
         """
         self.names= names
         self.values= values
@@ -251,7 +285,12 @@ class plotPie:
         self.title= title
 
     def show(self, block= True, show=True):
-        """Muestra el gráfico de pastel."""
+        """Muestra el gráfico de pastel.
+        
+        Args:
+            block: Si la ventana del gráfico debe bloquear la ejecución hasta cerrarse.
+            show: Si se debe mostrar el gráfico.
+        """
         if show:
             plt.figure()
         plt.pie(self.values, labels=self.names, colors=self.colors, autopct='%1.1f%%')

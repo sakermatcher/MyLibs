@@ -74,6 +74,12 @@ idx = v4.find(6)           # devuelve índice o None
 ```
 El slicing devuelve un nuevo vector: `v_part = v3[10:20]`.
 
+### Linspace
+Crea un vector con un número especificado de puntos equidistantes entre inicio y fin (inclusive):
+```python
+v_lin = sak.linspace(0, 10, 5)  # 0, 2.5, 5, 7.5, 10
+```
+
 ### Importación de Datos (`load` / `imp` / `cargar`)
 ```python
 dataset = sak.cargar("mydata", type="xlsx")
@@ -83,6 +89,12 @@ colA = dataset.toVec("A", 2, 40)        # Letras de columnas estilo Excel
 colPorIdx = dataset.toVec(1, 2, 40)      # índice de columna base cero
 ```
 Las letras de columna se traducen (A, B, ..., Z, AA, AB...). También puedes usar nombres de encabezado exactos (no distinguen mayúsculas/minúsculas). Se detiene al encontrar un valor en blanco/NaN o al exceder la fila `stop`.
+
+### Guardar Datos (`save` / `exp` / `guardar`)
+```python
+dataset.guardar("archivoSalida", vec1, vec2, names=["Tiempo","Valor"])
+```
+Guarda vectores en `archivoSalida.xlsx`, nombres: lista opcional de encabezados de columna.
 
 ### Funciones (`fx`)
 Construye desde una expresión en cadena. Operadores soportados: `+ - * / ^` y trigonometría (`sin`, `cos`, `tan`), `log`, `sqrt`, constantes `e`, `pi`. La trigonometría puede estar en grados (por defecto) o radianes.
@@ -161,6 +173,7 @@ Formas del constructor:
 * `vec(start, stop)` → paso 1
 * `vec(start, stop, step)`
 * `vec(data=[...])` provee elementos explícitos
+* `linspace(start, stop, numPoints)` → vector con `numPoints` puntos equidistantes entre `start` y `stop` (inclusivo).
 
 Métodos clave: `suma()`, `diff()`, `encontrar(value)`, `agregarDatos(list)`, `append(val)`, `combinar(other)`, `toFloats()`, slicing `v[a:b]`.
 Operadores: `+ - * /` con escalar o vector de igual longitud.
@@ -168,6 +181,9 @@ Operadores: `+ - * /` con escalar o vector de igual longitud.
 ### load / imp / cargar
 `cargar(filepath: str, type: 'csv'|'xlsx'|'json')` – lee `filepath.<type>`.
 `toVec(col, row=1, stop=None)` – extracción de columna; `col` puede ser int, nombre de encabezado, o letras.
+
+### save / exp / guardar
+`guardar(filepath: str, *vectors: vector, names: list[str]=None)` – guarda vectores en `filepath.xlsx`, `names`: lista opcional de encabezados de columna.
 
 ### fx
 `fx(equation: str, degRad='deg')` – construye expresión. Usa `calc(x)` o alias `eval(x)` donde `x` es escalar o vector.

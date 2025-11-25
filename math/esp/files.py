@@ -1,13 +1,15 @@
 from pandas import read_csv, read_excel, read_json
 import pandas as pd
-from sak.math.eng.vector import vector
+from .vector import vector
 
 class load:
     def __init__(self, filepath: str, type: str = "xlsx"):
         """
-        Initializes the import class with the given file path.
-        filepath: path to the file to be imported
-        type: type of the file ('csv', 'xlsx', 'json')
+        Inicializa la clase de importación con la ruta del archivo.
+
+        Args:
+            filepath: ruta al archivo que se desea importar
+            type: tipo de archivo ('csv', 'xlsx', 'json')
         """
         self.filepath = filepath
         self.type = type.lower()
@@ -18,23 +20,24 @@ class load:
         elif self.type == "json":
             self.data = read_json(f"{self.filepath}.{self.type}")
         else:
-            raise ValueError("Unsupported file type. Supported types are: csv, xlsx, json.")
+            raise ValueError("Tipo de archivo no soportado. Tipos permitidos: csv, xlsx, json.")
         
     def show(self):
         """
-        Displays the imported data.
+        Muestra los datos importados.
         """
         print(self.data)
 
     mostrar= show
 
     def toVec(self, col: 'int|str' = "a", row: int = 1, stop: int = None) -> vector:
-        """
-        Returns a column of the data as a vector.
-        col: column index to extract (int index or column label / Excel-style letter(s))
-        row: starting row index (1-based)
-        stop: optional ending row index (1-based, inclusive). If provided, iteration
-              stops when the current row index would exceed `stop`.
+        """Devuelve una columna de los datos como un vector.
+
+        Args:
+            col: índice de columna a extraer (índice entero o etiqueta de columna / letras estilo Excel)
+            row: índice de fila inicial (comenzando en 1)
+            stop: índice de fila final opcional (comenzando en 1, inclusivo). Si se proporciona,
+            la iteración se detiene cuando el índice de la fila actual excede `stop`.
         """
         vals = []
         i = row - 1
@@ -44,9 +47,9 @@ class load:
             try:
                 stop = int(stop)
             except Exception:
-                raise ValueError("stop must be an integer or None")
+                raise ValueError("stop debe ser un entero o None")
             if stop < row:
-                raise ValueError("stop must be greater than or equal to row")
+                raise ValueError("stop debe ser mayor o igual que row")
 
         # Helper: convert Excel-style letters (A, B, ..., Z, AA, AB, ...) to zero-based index
         def letters_to_index(s: str) -> int | None:
@@ -80,7 +83,7 @@ class load:
                             # Try Excel-style letter(s) -> index
                             letter_idx = letters_to_index(str(col))
                             if letter_idx is None:
-                                raise KeyError(f"Column '{col}' not found")
+                                raise KeyError(f"Columna '{col}' no encontrada")
                             col_idx = letter_idx
                     val = self.data.iloc[i, col_idx]
             except IndexError:
@@ -93,3 +96,36 @@ class load:
         return vector(data=vals)
         
     aVector= toVec
+
+def save(filepath: str, *vectors, names: list[str] = None, pad: float | None = None):
+    """Guarda uno o más vectores en un archivo Excel.
+
+    Soporta vectores de distinta longitud alineándolos por índice. Los más cortos
+    quedan con NaN en las filas faltantes por defecto, o se rellenan con ``pad`` si se especifica.
+
+    Args:
+        filepath: Ruta destino sin la extensión (se agrega ``.xlsx``).
+        *vectors: Instancias de ``vector`` a exportar.
+        names: Lista opcional de nombres de columnas (por defecto 'A','B',...).
+        pad: Valor numérico opcional para rellenar los huecos (NaN) de vectores más cortos.
+    """
+    filepath = filepath.rstrip('.xlsx')
+    series = {}
+    for idx, vec in enumerate(vectors):
+        if names is not None and idx < len(names):
+            col_name = names[idx]
+        else:
+            col_name = chr(65 + idx)
+        valores = vec._toFloats()
+        s = pd.Series(valores, name=col_name)
+        series[col_name] = s
+
+    if series:
+        df = pd.concat(series.values(), axis=1)
+    else:
+        df = pd.DataFrame()
+
+    if pad is not None:
+        df = df.fillna(pad)
+
+    df.to_excel(f"{filepath}.xlsx", index=False)

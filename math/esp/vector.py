@@ -39,7 +39,7 @@ class vector():
         - 2 argumentos: start, stop (incluyente)
         - 3 argumentos: start, stop, step (incluyente)
 
-        También puedes proporcionar datos desde una lista con el método .addData().
+        También puedes proporcionar datos desde una lista con el parámetro data=[valores].
         """
         self.name= ""
         if data is not None:
@@ -148,11 +148,19 @@ class vector():
         return vector(data=diffs)
     
     def addInfo(self, name="") -> None:
-        """Añade un nombre o descripción al vector."""
+        """Añade un nombre o descripción al vector.
+        
+        Args:
+            name: Nombre o descripción del vector.
+        """
         self.name= name
 
     def find(self, value: int | float | Decimal) -> int | None:
-        """Busca el índice de un valor en el vector. Devuelve None si no se encuentra."""
+        """Busca el índice de un valor en el vector. Devuelve None si no se encuentra.
+        
+        Args:
+            value: Valor a buscar en el vector.
+        """
         try:
             value_d = _to_decimal(value)
             return self.vec.index(value_d)
@@ -162,27 +170,59 @@ class vector():
     encontrar= find
         
     def addData(self, data:list|tuple) -> None:
-        """Añade varios valores al final del vector desde una lista o tupla."""
+        """Añade varios valores al final del vector desde una lista o tupla.
+        
+        Args:
+            data: Lista o tupla de valores a añadir al vector.
+        """
         for item in data:
             self.append(item)
     
     agregarDatos= addData
 
     def append(self, obj: int | float | Decimal) -> None:
-        """Añade un valor al final del vector."""
+        """Añade un valor al final del vector.
+        
+        Args:
+            obj: Valor a añadir (int, float o Decimal).
+        """
         if isinstance(obj, (int, float, Decimal)):
             self.vec.append(_to_decimal(obj))
         else:
             raise ValueError("Solo se permiten valores int, float y Decimal en el vector")
 
     def combine(self, other: "vector") -> "vector":
-        """Combina dos vectores en un nuevo vector por concatenación."""
+        """Combina dos vectores en un nuevo vector por concatenación.
+        
+        Args:
+            other: Otro vector a combinar.
+        """
         if not isinstance(other, vector):
             raise ValueError("El parámetro 'other' debe ser un vector")
         return vector(data=(self.vec + other.vec))
     
     combinar= combine
     
-    def toFloats(self) -> list[float]:
+    def _toFloats(self) -> list[float]:
         """Convierte los elementos del vector a una lista de floats."""
         return [float(x) for x in self.vec]
+    
+def linspace(start: Union[int, float, Decimal], stop: Union[int, float, Decimal], num: int) -> vector:
+    """Genera un vector con valores espaciados linealmente entre start y stop.
+    
+    Args:
+        start: valor inicial
+        stop: valor final
+        num: número de valores a generar
+    """
+    if num <= 0:
+        return vector()
+    if num == 1:
+        return vector(data=[start])
+    
+    start_d = _to_decimal(start)
+    stop_d = _to_decimal(stop)
+    step = (stop_d - start_d) / _to_decimal(num - 1)
+    
+    values = [start_d + step * _to_decimal(i) for i in range(num)]
+    return vector(data=values)

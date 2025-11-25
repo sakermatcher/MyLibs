@@ -46,11 +46,12 @@ def _gaussian_elimination(A: list[list[Decimal]], B: list[Decimal]) -> list[Deci
 
 class fx():
     def __init__(self, equation:str, degRad= "deg"):
-        """
-        Creates a function object from a string equation.
-        equation: equation as a string, e.g., '2x^2 + 3x + 1'
-        x will the vector (or single number) that the function will evaluate against.
-        degRad: 'deg' for degrees, 'rad' for radians (affects trig functions)
+        """Creates a function object from a string equation.
+        
+        Args:
+            equation: equation as a string, e.g., '2x^2 + 3x + 1'
+            x will the vector (or single number) that the function will evaluate against.
+            degRad: 'deg' for degrees, 'rad' for radians (affects trig functions)
         """
         eq= equation.replace(" ", "")
         eq= eq.lower()
@@ -94,6 +95,10 @@ class fx():
     def calc(self, x: int | float | vector, **constants:int | float | Decimal):
         """
         Calculates the function value(s) for given x.
+
+        Args:
+            x: int, float, or vector of x values
+            constants: additional constants to use in the equation
         """
         # Build a safe environment for eval: include math functions and any passed constants.
         env = {
@@ -130,14 +135,22 @@ class fx():
     
     def eval(self, x: int | float | vector, **constants:int | float | Decimal):
         """Evaluates the function at given x value(s).
-        x: int, float, or vector of x values
-        constants: additional constants to use in the equation
+        
+        Args:
+            x: int, float, or vector of x values
+            constants: additional constants to use in the equation
         """
         return self.calc(x, **constants)
     
 def polyfit(x: vector, y: vector, degree: int) -> fx:
     """
     Fits a polynomial of given degree to the data points (x, y) using least squares.
+
+    Args:
+        x: vector of x data points
+        y: vector of y data points
+        degree: degree of the polynomial to fit
+    
     Returns a function object representing the fitted polynomial.
     """
     if len(x) != len(y):

@@ -12,9 +12,12 @@ else:
 def _gaussian_elimination(A: list[list[Decimal]], B: list[Decimal]) -> list[Decimal]:
     """
     Resuelve el sistema lineal A * x = B usando eliminación gaussiana.
-    A: matriz (lista de listas) de Decimals (se modifica en el proceso).
-    B: vector (lista) de Decimals (se modifica en el proceso).
-    Devuelve: lista de Decimals con las soluciones.
+
+    Args:
+        A: matriz (lista de listas) de Decimals (se modifica en el proceso).
+        B: vector (lista) de Decimals (se modifica en el proceso).
+        Devuelve: lista de Decimals con las soluciones.
+    
     Lanza ValueError si la matriz es singular y no puede ser resuelta.
     """
     n = len(B)
@@ -55,9 +58,11 @@ class fx():
     def __init__(self, equation:str, degRad= "deg"):
         """
         Crea un objeto función a partir de una ecuación dada como cadena.
-        equation: ecuación como cadena, ej. '2x^2 + 3x + 1'.
-        x será el vector (o número) sobre el que se evalúa la función.
-        degRad: 'deg' para grados, 'rad' para radianes (afecta funciones trigonométricas).
+
+        Args:
+            equation: ecuación como cadena, ej. '2x^2 + 3x + 1'.
+            x será el vector (o número) sobre el que se evalúa la función.
+            degRad: 'deg' para grados, 'rad' para radianes (afecta funciones trigonométricas).
         """
         eq= equation.replace(" ", "")
         eq= eq.lower()
@@ -101,8 +106,11 @@ class fx():
     def calc(self, x: int | float | vector, **constants:int | float | Decimal):
         """
         Calcula el/los valor(es) de la función para el x dado.
-        x: int | float | vector (lista de valores de x).
-        constants: constantes adicionales disponibles por nombre en la ecuación.
+
+        Args:
+            x: int | float | vector (lista de valores de x).
+            constants: constantes adicionales disponibles por nombre en la ecuación.
+        
         Devuelve: Decimal o vector de Decimals con los resultados.
         """
         # Build a safe environment for eval: include math functions and any passed constants.
@@ -140,8 +148,11 @@ class fx():
     
     def eval(self, x: int | float | vector, **constants:int | float | Decimal):
         """Evalúa la función en los valores x dados.
-        x: int, float o vector de valores de x.
-        constants: constantes adicionales a usar en la ecuación.
+
+        Args:
+            x: int, float o vector de valores de x.
+            constants: constantes adicionales a usar en la ecuación.
+        
         Equivalente a calc().
         """
         return self.calc(x, **constants)
@@ -149,10 +160,12 @@ class fx():
 def polyfit(x: vector, y: vector, degree: int) -> fx:
     """
     Ajusta un polinomio de grado dado a los puntos de datos (x, y) usando mínimos cuadrados.
-    x: vector de valores independientes.
-    y: vector de valores dependientes.
-    degree: grado del polinomio (>= 0).
-    Devuelve: objeto fx que representa el polinomio ajustado.
+    
+    Args:
+        x: vector de valores independientes.
+        y: vector de valores dependientes.
+        degree: grado del polinomio (>= 0).
+        Devuelve: objeto fx que representa el polinomio ajustado.
     Lanza ValueError si las longitudes de x e y difieren o si degree < 0.
     """
     if len(x) != len(y):

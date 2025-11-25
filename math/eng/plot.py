@@ -28,7 +28,9 @@ class fig:
     def __init__(self, subPlots:list[list]):
         """
         initializes a figure with given subplots.
-        subPlots: 2D list of plot objects to arrange in the figure.
+        
+        Args:
+            ots: 2D list of plot objects to arrange in the figure.
         """
         if type(subPlots[0]) is not list:
             subPlots= [subPlots]
@@ -50,7 +52,6 @@ class fig:
                 plotIndex+= 1
             plotIndex= (y+1)*self.sizeX + 1
         plt.show(block= block)
-        plt.close()
 
     mostrar= show
 
@@ -61,12 +62,14 @@ class plotHeatMap:
     def __init__(self, values:list[list[float]], x_labels:list[str]=None, y_labels:list[str]=None, title:str="Heat Map", showVals:bool=True, cmap:str="viridis", showGrid:bool=True):
         """
         initializes a heat map with given data and styling options.
-        values: 2D list of values for the heat map
-        x_labels: labels for the x-axis
-        y_labels: labels for the y-axis
-        title: title of the heat map
-        cmap: color map to use
-        showGrid: whether to show grid lines
+
+        Args:
+            values: 2D list of values for the heat map
+            x_labels: labels for the x-axis
+            y_labels: labels for the y-axis
+            title: title of the heat map
+            cmap: color map to use
+            showGrid: whether to show grid lines
         """
         self.values= values
         self.x_labels= x_labels
@@ -94,10 +97,14 @@ class plotBox:
     def __init__(self, values:vector, x_label:str="X-axis", y_label:str="Y-axis", title:str="Box Plot", color:str=None, showGrid:bool=True):
         """
         initializes a box plot with given data and styling options.
-        y_data: vector of y-coordinates
-        label: label for the box plot
-        color: color of the box
-        showGrid: whether to show grid lines
+
+        Args:
+            values: vector of y-coordinates
+            x_label: label for the x-axis
+            y_label: label for the y-axis
+            title: title of the box plot
+            color: color of the box
+            showGrid: whether to show grid lines
         """
         self.y_data= values
         if color is None:
@@ -112,7 +119,11 @@ class plotBox:
         """Displays the box plot."""
         if show:
             plt.figure()
-        plt.boxplot(self.y_data.toFloats(), patch_artist= True, boxprops=dict(facecolor=self.color))
+        if type(self.y_data) is vector:
+            yData= self.y_data._toFloats()
+        else:
+            yData= self.y_data
+        plt.boxplot(yData, patch_artist= True, boxprops=dict(facecolor=self.color))
         plt.title(self.title)
         plt.xlabel(self.x_label)
         plt.ylabel(self.y_label)
@@ -128,12 +139,17 @@ class plotLine:
     def __init__(self, x:vector, y:vector, x_label:str="X-axis", y_label:str="Y-axis", title:str="Plot", label:str="", color:str=None, type:str='l', pointTypes:str="", showGrid:bool=True):
         """
         initializes a plot line with given data and styling options.
-        x: vector of x-coordinates
-        y_data: vector of y-coordinates
-        label: label for the plot line
-        color: color of the plot line
-        type: type of plot ('l' for line, 's' for scatter, etc.)
-        pointTypes: marker style for points (if applicable)
+
+        Args:
+            x: vector of x-coordinates
+            y: vector of y-coordinates
+            x_label: label for the x-axis
+            y_label: label for the y-axis
+            title: title of the plot
+            label: label for the plot line
+            color: color of the plot line
+            type: type of plot ('l' for line, 's' for scatter, etc.)
+            pointTypes: marker style for points (if applicable)
         """
         self.x_data= [x]
         self.y_data= [y]
@@ -153,12 +169,14 @@ class plotLine:
     def addData(self, x:vector, y:vector, label:str="", color:str=None, type:str='l', pointTypes:str=""):
         """
         adds another data set to the plot line.
-        x: vector of x-coordinates
-        y: vector of y-coordinates
-        label: label for the new data set
-        color: color of the new data set
-        type: type of plot ('l' for line, 's' for scatter, etc.)
-        pointTypes: marker style for points (if applicable)
+
+        Args:
+            x: vector of x-coordinates
+            y: vector of y-coordinates
+            label: label for the new data set
+            color: color of the new data set
+            type: type of plot ('l' for line, 's' for scatter, etc.)
+            pointTypes: marker style for points (if applicable)
         """
         self.x_data.append(x)
         self.y_data.append(y)
@@ -198,11 +216,13 @@ class plotBar:
     def __init__(self, names:list[str], y:vector, x_label:str="", y_label:str="", title:str="Bar Plot", color:str=None, showGrid:bool=True):
         """
         initializes a bar plot with given data and styling options.
-        names: names for each bar
-        y: vector of y-coordinates
-        label: label for the bar plot
-        color: color of the bars
-        showGrid: whether to show grid lines
+        
+        Args:
+            names: names for each bar
+            y: vector of y-coordinates
+            label: label for the bar plot
+            color: color of the bars
+            showGrid: whether to show grid lines
         """
         self.names= names
         self.y_data= y
@@ -234,10 +254,12 @@ class plotPie:
     def __init__(self, names:list[str], values:vector, title:str="Pie Chart", colors:list[str]=None):
         """
         initializes a pie chart with given data and styling options.
-        names: names for each slice
-        y: vector of y-coordinates
-        title: title of the pie chart
-        colors: list of colors for the slices
+
+        Args:
+            names: names for each slice
+            values: vector of values for each slice
+            title: title of the pie chart
+            colors: list of colors for the slices
         """
         self.names= names
         self.values= values
@@ -250,6 +272,7 @@ class plotPie:
         """Displays the pie chart."""
         if show:
             plt.figure()
+        
         plt.pie(self.values, labels=self.names, colors=self.colors, autopct='%1.1f%%')
         plt.title(self.title)
 

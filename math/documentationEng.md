@@ -75,6 +75,12 @@ idx = v4.find(6)           # returns index or None
 ```
 Slice returns a new vector: `v_part = v3[10:20]`.
 
+### Linspace
+Create a vector with a specified number of evenly spaced points between start and stop (inclusive):
+```python
+v_lin = sak.linspace(0, 10, 5)  # 0, 2.5, 5, 7.5, 10
+```
+
 ### Data Import (`load` / `imp`)
 ```python
 dataset = sak.imp("mydata", type="csv")
@@ -82,6 +88,12 @@ colA = dataset.toVec("A", 2, 40)        # Excel style column letters
 colByIdx = dataset.toVec(1, 2, 40)      # zero-based column index
 ```
 Column letters are translated (A, B, ..., Z, AA, AB...). You can also use exact header names (case-insensitive). Stops when encountering a blank/NaN or the `stop` row.
+
+### Data Save (`save` / `exp`)
+```python
+dataset.save("outputFile", vec1, vec2, names=["Time","Value"])
+```
+Saves vectors to `outputFile.xlsx`, names: optional list of column headers.
 
 ### Functions (`fx`)
 Build from a string expression. Supported operators: `+ - * / ^` and trig (`sin`, `cos`, `tan`), `log`, `sqrt`, constants `e`, `pi`. Trig can be in degrees (default) or radians.
@@ -160,6 +172,7 @@ Constructor forms:
 * `vec(start, stop)` → step 1
 * `vec(start, stop, step)`
 * `vec(data=[...])` provide explicit elements
+* `linspace(start, stop, numPoints)` → vector with `numPoints` evenly spaced points between `start` and `stop` (inclusive).
 
 Key methods: `sum()`, `diff()`, `find(value)`, `addData(list)`, `append(val)`, `combine(other)`, `toFloats()`, slicing `v[a:b]`.
 Operators: `+ - * /` with scalar or equal-length vector.
@@ -167,6 +180,9 @@ Operators: `+ - * /` with scalar or equal-length vector.
 ### load / imp
 `load(filepath: str, type: 'csv'|'xlsx'|'json')` – reads `filepath.<type>`.
 `toVec(col, row=1, stop=None)` – column extraction; `col` may be int, header name, or letters.
+
+### save / exp
+`save(filepath: str, *vectors: vector, names: list[str]=None)` – saves vectors to `filepath.xlsx`, `names`: optional list of column headers.
 
 ### fx
 `fx(equation: str, degRad='deg')` – builds expression. Use `calc(x)` or alias `eval(x)` where `x` is scalar or vector.

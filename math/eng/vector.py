@@ -1,5 +1,6 @@
 from __future__ import annotations
 from decimal import Decimal
+import pandas as pd
 from typing import overload, Sequence, Optional, Union
 
 
@@ -39,7 +40,7 @@ class vector():
         - 2 args: start, stop (inclusive)
         - 3 args: start, stop, step (inclusive)
 
-        You can also provide data from a list with .addData() method.
+        You can also provide data from a list with data=[values].
         """
         self.name= ""
         if data is not None:
@@ -152,7 +153,11 @@ class vector():
         self.name= name
 
     def find(self, value: int | float | Decimal) -> int | None:
-        """Find the index of a value in the vector. Returns None if not found."""
+        """Find the index of a value in the vector. Returns None if not found.
+        
+        Args:
+            value: value to find in the vector
+        """
         try:
             value_d = _to_decimal(value)
             return self.vec.index(value_d)
@@ -162,27 +167,59 @@ class vector():
     encontrar= find
         
     def addData(self, data:list|tuple) -> None:
-        """Add multiple values to the end of the vector from a list or tuple."""
+        """Add multiple values to the end of the vector from a list or tuple.
+        
+        Args:
+            data: list or tuple of values to add to the vector
+        """
         for item in data:
             self.append(item)
 
     agregarDatos= addData
 
     def append(self, obj: int | float | Decimal) -> None:
-        """Append a value to the end of the vector."""
+        """Append a value to the end of the vector.
+        
+        Args:
+            obj: value to append (int, float, or Decimal)
+        """
         if isinstance(obj, (int, float, Decimal)):
             self.vec.append(_to_decimal(obj))
         else:
             raise ValueError("Only int, float and Decimal values are allowed in vector")
 
     def combine(self, other: "vector") -> "vector":
-        """Combine two vectors into a new vector by concatenation."""
+        """Combine two vectors into a new vector by concatenation.
+        
+        Args:
+            other: another vector to combine with.
+        """
         if not isinstance(other, vector):
             raise ValueError("Other must be a vector")
         return vector(data=(self.vec + other.vec))
     
     combinar= combine
     
-    def toFloats(self) -> list[float]:
+    def _toFloats(self) -> list[float]:
         """Convert the vector elements to a list of floats."""
         return [float(x) for x in self.vec]
+    
+def linspace(start: Union[int, float, Decimal], stop: Union[int, float, Decimal], num: int) -> vector:
+    """Generate a vector with linearly spaced values between start and stop.
+    
+    Args:
+        start: starting value
+        stop: ending value
+        num: number of values to generate
+    """
+    if num <= 0:
+        return vector()
+    if num == 1:
+        return vector(data=[start])
+    
+    start_d = _to_decimal(start)
+    stop_d = _to_decimal(stop)
+    step = (stop_d - start_d) / _to_decimal(num - 1)
+    
+    values = [start_d + step * _to_decimal(i) for i in range(num)]
+    return vector(data=values)
