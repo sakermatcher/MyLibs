@@ -16,6 +16,10 @@ colors = [
     "#6699CC", "#9966CC", "#CC6699", "#99FF66", "#6699FF"
 ]
 
+def pause(time:int|float):
+    """Pauses the execution for a given time in seconds."""
+    plt.pause(time)
+
 def getNextColor():
     global onColor
     color = colors[onColor]
@@ -165,6 +169,7 @@ class plotLine:
         self.showGrid= showGrid
         self.x_label= x_label
         self.y_label= y_label
+        self.plot= None
 
     def addData(self, x:vector, y:vector, label:str="", color:str=None, type:str='l', pointTypes:str=""):
         """
@@ -191,10 +196,33 @@ class plotLine:
 
     aggregarDatos= addData
 
-    def show(self, block= True, show=True):
+    def changeData(self, index:int, x:vector, y:vector, label:str="", color:str=None, type:str='', pointTypes:str=""):
+        """
+        changes an existing data set in the plot line.
+
+        Args:
+            index: index of the data set to change
+            x: new vector of x-coordinates
+            y: new vector of y-coordinates
+        """
+        if label != "":
+            self.labels[index]= label
+        if color is not None:
+            self.colors[index]= color
+        if type != '':
+            self.types[index]= type
+        if pointTypes != "":
+            self.pointTypes[index]= pointTypes
+        
+        self.x_data[index]= x
+        self.y_data[index]= y
+
+    def show(self, block= True, show=True, figure:int=0):
         """Displays the plot line."""
         if show:
-            plt.figure()
+            plt.figure(figure)
+            # clear previous contents so repeated calls redraw a fresh frame
+            plt.clf()
         for i in range(len(self.x_data)):
             if self.types[i] == 'l':
                 plt.plot(self.x_data[i], self.y_data[i], label=self.labels[i], color=self.colors[i])
@@ -208,7 +236,8 @@ class plotLine:
 
         if show:
             plt.show(block= block)
-            plt.close()
+            if block:
+                plt.close()
 
     mostrar= show
 
