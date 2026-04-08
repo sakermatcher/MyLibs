@@ -241,6 +241,86 @@ class plotLine:
 
     mostrar= show
 
+class plotQuiver:
+    def __init__(self, x:vector, y:vector, u:vector, v:vector, x_label:str="X-axis", y_label:str="Y-axis", title:str="Quiver Plot", color:str=None, scale:float=None, angles:str="xy", scale_units:str="xy", width:float=None, showGrid:bool=True):
+        """
+        initializes a quiver plot with given vector field data and styling options.
+
+        Args:
+            x: vector of x-coordinates for arrow origins
+            y: vector of y-coordinates for arrow origins
+            u: vector of x-components for arrows
+            v: vector of y-components for arrows
+            x_label: label for the x-axis
+            y_label: label for the y-axis
+            title: title of the plot
+            color: color for arrows
+            scale: scaling factor for arrow length
+            angles: angle mode for arrows
+            scale_units: unit mode used with scale
+            width: shaft width of arrows
+            showGrid: whether to show grid lines
+        """
+        self.x_data= x
+        self.y_data= y
+        self.u_data= u
+        self.v_data= v
+        if color is None:
+            color= getNextColor()
+        self.color= color
+        self.scale= scale
+        self.angles= angles
+        self.scale_units= scale_units
+        self.width= width
+        self.title= title
+        self.showGrid= showGrid
+        self.x_label= x_label
+        self.y_label= y_label
+
+    def show(self, block= True, show=True):
+        """Displays the quiver plot."""
+        if show:
+            plt.figure()
+
+        if type(self.x_data) is vector:
+            xData= self.x_data._toFloats()
+        else:
+            xData= self.x_data
+        if type(self.y_data) is vector:
+            yData= self.y_data._toFloats()
+        else:
+            yData= self.y_data
+        if type(self.u_data) is vector:
+            uData= self.u_data._toFloats()
+        else:
+            uData= self.u_data
+        if type(self.v_data) is vector:
+            vData= self.v_data._toFloats()
+        else:
+            vData= self.v_data
+
+        kwargs= {
+            "angles": self.angles,
+            "scale_units": self.scale_units,
+            "color": self.color
+        }
+        if self.scale is not None:
+            kwargs["scale"]= self.scale
+        if self.width is not None:
+            kwargs["width"]= self.width
+
+        plt.quiver(xData, yData, uData, vData, **kwargs)
+        plt.title(self.title)
+        plt.xlabel(self.x_label)
+        plt.ylabel(self.y_label)
+        plt.grid(self.showGrid)
+
+        if show:
+            plt.show(block= block)
+            plt.close()
+
+    mostrar= show
+
 class plotBar:
     def __init__(self, names:list[str], y:vector, x_label:str="", y_label:str="", title:str="Bar Plot", color:str=None, showGrid:bool=True):
         """

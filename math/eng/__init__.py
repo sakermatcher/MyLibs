@@ -3,6 +3,7 @@ from .vector import vector as vector
 from .vector import linspace
 from .func import polyfit
 from .func import fx
+frpm .func import area
 from .plot import *
 from .plot import fig as figura
 from .plot import plotHeatMap as graficaMapaCalor

@@ -183,3 +183,22 @@ def polyfit(x: vector, y: vector, degree: int) -> fx:
     equation = " + ".join(equation_terms).replace("+ -", "- ")
 
     return fx(equation)
+
+def makeArea(x1: int | float, x2: int | float, y1: int | float, y2: int | float, step: int | float) -> list:
+    """Creates a rectangular area defined by two points (x1, y1) and (x2, y2).
+    
+    Args:
+        x1, y1: coordinates of the first point
+        x2, y2: coordinates of the second point
+        step: distance between points in the area grid
+    Returns a list of (x, y) tuples representing the area.
+    """
+    area = []
+    x = min(x1, x2)
+    while x <= max(x1, x2):
+        y = min(y1, y2)
+        while y <= max(y1, y2):
+            area.append((x, y))
+            y += step
+        x += step
+    return area
