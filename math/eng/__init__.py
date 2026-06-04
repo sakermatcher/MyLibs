@@ -1,9 +1,11 @@
 from .vector import vector as vec
 from .vector import vector as vector
+from .vector import vector2D as vec2D
+from .vector import vector2D as vector2D
 from .vector import linspace
 from .func import polyfit
 from .func import fx
-frpm .func import area
+from .func import makeArea
 from .plot import *
 from .plot import fig as figura
 from .plot import plotHeatMap as graficaMapaCalor

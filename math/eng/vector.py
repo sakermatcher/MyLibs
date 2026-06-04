@@ -75,6 +75,16 @@ class vector():
 
     def __len__(self) -> int:
         return len(self.vec)
+    
+    def __setitem__(self, s: slice | int, value) -> None:
+        if isinstance(s, int):
+            self.vec[s] = _to_decimal(value)
+            return
+
+        if not isinstance(value, Sequence):
+            raise ValueError("Slice assignment requires a sequence of values")
+
+        self.vec[s] = [_to_decimal(x) for x in value]
 
     def __str__(self) -> str:
         txt= ""
@@ -129,6 +139,16 @@ class vector():
 
     def __truediv__(self, other: int | float | Decimal | "vector") -> "vector":
         return self.__div__(other)
+    
+    def __pow__(self, other: int | float | Decimal | "vector") -> "vector":
+        if isinstance(other, (int, float, Decimal)):
+            other_d = _to_decimal(other)
+            return vector(data=[x ** other_d for x in self.vec])
+        if isinstance(other, vector):
+            if len(self.vec) != len(other.vec):
+                raise ValueError("vectors must be same length")
+            return vector(data=[a ** b for a, b in zip(self.vec, other.vec)])
+        raise ValueError("Other must be int|float|Decimal|vector")
 
     def __getitem__(self, s: slice | int):
         if isinstance(s, int):
@@ -204,6 +224,148 @@ class vector():
         """Convert the vector elements to a list of floats."""
         return [float(x) for x in self.vec]
     
+class vector2D():
+    @overload
+    def __init__(self, stop_x: Union[int, float, Decimal], stop_y: Union[int, float, Decimal]) -> None: ...
+
+    @overload
+    def __init__(self, start_x: Union[int, float, Decimal], stop_x: Union[int, float, Decimal], start_y: Union[int, float, Decimal], stop_y: Union[int, float, Decimal]) -> None: ...
+
+    @overload
+    def __init__(self, start_x: Union[int, float, Decimal], stop_x: Union[int, float, Decimal], step_x: Union[int, float, Decimal], start_y: Union[int, float, Decimal], stop_y: Union[int, float, Decimal], step_y: Union[int, float, Decimal]) -> None: ...
+
+    def __init__(self, *args, points: Optional[Sequence[Sequence[Union[int, float, Decimal]]]] = None) -> None:
+        """
+        Create a 2D vector/grid.
+
+        Supported overloads:
+        - vector2D(stop_x, stop_y)
+        - vector2D(start_x, stop_x, start_y, stop_y)
+        - vector2D(start_x, stop_x, step_x, start_y, stop_y, step_y)
+        - vector2D(points=[[x1, y1], [x2, y2], ...])
+        """
+        self.name = ""
+        self.points: list[tuple[Decimal, Decimal]] = []
+        self.x_axis: list[Decimal] = []
+        self.y_axis: list[Decimal] = []
+
+        if points is not None:
+            self._init_from_points(points)
+            return
+
+        if len(args) == 2:
+            start_x, stop_x, step_x = 0, args[0], 1
+            start_y, stop_y, step_y = 0, args[1], 1
+        elif len(args) == 4:
+            start_x, stop_x, start_y, stop_y = args
+            step_x, step_y = 1, 1
+        elif len(args) == 6:
+            start_x, stop_x, step_x, start_y, stop_y, step_y = args
+        else:
+            raise ValueError("vector2D expects 2, 4, or 6 positional values, or points=[(x, y), ...]")
+
+        self.x_axis = self._build_axis(start_x, stop_x, step_x)
+        self.y_axis = self._build_axis(start_y, stop_y, step_y)
+        self._rebuild_points_from_axes()
+
+    def _init_from_points(self, points: Sequence[Sequence[Union[int, float, Decimal]]]) -> None:
+        x_vals: list[Decimal] = []
+        y_vals: list[Decimal] = []
+        for p in points:
+            if len(p) != 2:
+                raise ValueError("Each point must have exactly 2 values: (x, y)")
+            x_d = _to_decimal(p[0])
+            y_d = _to_decimal(p[1])
+            self.points.append((x_d, y_d))
+            x_vals.append(x_d)
+            y_vals.append(y_d)
+
+        self.x_axis = sorted(set(x_vals))
+        self.y_axis = sorted(set(y_vals))
+
+    def _build_axis(self, start, stop, step) -> list[Decimal]:
+        start_d = _to_decimal(start)
+        stop_d = _to_decimal(stop)
+        step_d = _to_decimal(step)
+
+        if step_d == 0:
+            raise ValueError("Step value cannot be zero")
+
+        if start_d == stop_d:
+            return [start_d]
+
+        values: list[Decimal] = []
+        current = start_d
+        if step_d > 0:
+            while current <= stop_d:
+                values.append(current)
+                current += step_d
+        else:
+            while current >= stop_d:
+                values.append(current)
+                current += step_d
+
+        return values
+
+    def _rebuild_points_from_axes(self) -> None:
+        self.points = []
+        for y in self.y_axis:
+            for x in self.x_axis:
+                self.points.append((x, y))
+
+    def __len__(self) -> int:
+        return len(self.points)
+
+    def __iter__(self):
+        return iter(self.points)
+
+    def __getitem__(self, s: slice | int):
+        if isinstance(s, int):
+            return self.points[s]
+        return self.points[s]
+
+    def __str__(self) -> str:
+        return f"\nvector2D with {len(self.points)} points ({len(self.x_axis)} x {len(self.y_axis)})\n"
+
+    def addInfo(self, name="") -> None:
+        self.name = name
+
+    def toX(self) -> list[float]:
+        """Get all the x values (repeating) of the points as a list of floats."""
+        return [float(x) for x, _ in self.points]
+
+    def toY(self) -> list[float]:
+        """Get all the y values (repeating) of the points as a list of floats."""
+        return [float(y) for _, y in self.points]
+    
+    def getX(self) -> list[float]:
+        """Get the unique x-axis values as a list of floats."""
+        return [float(x) for x in self.x_axis]
+    
+    def getY(self) -> list[float]:
+        """Get the unique y-axis values as a list of floats."""
+        return [float(y) for y in self.y_axis]
+
+    def _toFloats(self) -> tuple[list[float], list[float]]:
+        return (self.toX(), self.toY())
+
+    def asVectors(self) -> tuple[vector, vector]:
+        return (vector(data=self.toX()), vector(data=self.toY()))
+
+    def mesh(self) -> tuple[list[list[float]], list[list[float]]]:
+        x_grid = []
+        y_grid = []
+        for y in self.y_axis:
+            x_row = []
+            y_row = []
+            for x in self.x_axis:
+                x_row.append(float(x))
+                y_row.append(float(y))
+            x_grid.append(x_row)
+            y_grid.append(y_row)
+        return x_grid, y_grid
+    
+
 def linspace(start: Union[int, float, Decimal], stop: Union[int, float, Decimal], num: int) -> vector:
     """Generate a vector with linearly spaced values between start and stop.
     
